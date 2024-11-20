@@ -34,11 +34,11 @@ if (fs.existsSync(storeFile)) {
 } else {
  // Инициализация магазина с номерами
  storeData = [
-  { number: '+777 7 77', price: 2 },
-  { number: '+777 88 88', price: 2 },
-  { number: '+777 78 7', price: 2 },
-  { number: '+777 777 77', price: 2 },
-  { number: '+777 12 7', price: 2 },
+  { number: '777 7 77', price: 2 },
+  { number: '777 88 88', price: 2 },
+  { number: '777 78 7', price: 2 },
+  { number: '777 777 77', price: 2 },
+  { number: '777 12 7', price: 2 },
  ];
  fs.writeFileSync(storeFile, JSON.stringify(storeData, null, 2));
 }
