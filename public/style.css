@@ -1,0 +1,38 @@
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(120deg, #2980b9, #8e44ad);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #fff;
+   }
+   
+   form {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+   }
+   
+   input[type="text"] {
+    width: 80%;
+    padding: 10px;
+    margin: 15px 0;
+    border: none;
+    border-radius: 5px;
+   }
+   
+   button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background: #27ae60;
+    color: #fff;
+    cursor: pointer;
+   }
+   
+   button:hover {
+    background: #2ecc71;
+   }
+   
