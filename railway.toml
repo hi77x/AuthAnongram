@@ -1,0 +1,5 @@
+[build]
+command = "npm install -r requirements.txt"
+
+[deploy]
+command = "node script.js"  # Замените на название вашего файла, если оно другое
