@@ -1,38 +1,66 @@
-body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(120deg, #2980b9, #8e44ad);
+  /* Общие стили */
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #2980b9, #8e44ad);
+    color: #fff;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    color: #fff;
-   }
-   
-   form {
-    background: rgba(0, 0, 0, 0.5);
-    padding: 40px;
-    border-radius: 10px;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .container {
+    width: 100%;
+    max-width: 400px;
     text-align: center;
-   }
-   
-   input[type="text"] {
-    width: 80%;
-    padding: 10px;
-    margin: 15px 0;
+  }
+  .card {
+    background: rgba(0,0,0,0.6);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  h2 {
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    margin: 12px 0;
     border: none;
-    border-radius: 5px;
-   }
-   
-   button {
-    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 1rem;
+  }
+  button {
+    width: 100%;
+    padding: 12px;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
+    font-size: 1rem;
     background: #27ae60;
     color: #fff;
     cursor: pointer;
-   }
-   
-   button:hover {
+    transition: background 0.3s;
+  }
+  button:hover {
     background: #2ecc71;
-   }
-   
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+    margin: 20px 0;
+  }
+  /* Счётчик обратного отсчёта */
+  #timer {
+    font-size: 1.25rem;
+    margin-top: 15px;
+  }
+  /* Адаптив */
+  @media (max-width: 480px) {
+    .card { padding: 20px; }
+    h2 { font-size: 1.25rem; }
+    #timer { font-size: 1rem; }
+  }
