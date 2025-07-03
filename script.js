@@ -4,8 +4,7 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 
 // Замените на ваш реальный токен Telegram бота
-const token = '7893230202:AAGMkl3cEnK-nATZK0DY7LJN6e5k_32wO0k';
-
+const token = '7953846785:AAH30gBKZRFZIdO4LqUjOlqNnCg6aLNoyns';
 
 // Инициализация Telegram бота
 const bot = new TelegramBot(token, { polling: true });
@@ -24,115 +23,93 @@ const storeFile = 'store.json';
 // Загрузка существующих данных или инициализация пустого объекта
 let userData = {};
 if (fs.existsSync(dataFile)) {
- userData = JSON.parse(fs.readFileSync(dataFile));
+  userData = JSON.parse(fs.readFileSync(dataFile));
 }
 
 // Загрузка данных магазина или инициализация магазина
 let storeData = [];
 if (fs.existsSync(storeFile)) {
- storeData = JSON.parse(fs.readFileSync(storeFile));
+  storeData = JSON.parse(fs.readFileSync(storeFile));
 } else {
- // Инициализация магазина с номерами
- storeData = [
-  { number: '777 7 77', price: 2 },
-  { number: '777 88 88', price: 2 },
-  { number: '777 78 7', price: 2 },
-  { number: '777 777 77', price: 2 },
-  { number: '777 12 7', price: 2 },
- ];
- fs.writeFileSync(storeFile, JSON.stringify(storeData, null, 2));
+  // Инициализация магазина с номерами
+  storeData = [
+    { number: '777 7 77', price: 0 },
+    { number: '777 88 88', price: 0 },
+    { number: '777 78 7', price: 0 },
+    { number: '777 777 77', price: 0 },
+    { number: '777 12 7', price: 0 },
+  ];
+  fs.writeFileSync(storeFile, JSON.stringify(storeData, null, 2));
 }
 
 // Функция для сохранения данных пользователей
 function saveUserData() {
- fs.writeFileSync(dataFile, JSON.stringify(userData, null, 2));
+  fs.writeFileSync(dataFile, JSON.stringify(userData, null, 2));
 }
 
 // Функция для сохранения данных магазина
 function saveStoreData() {
- fs.writeFileSync(storeFile, JSON.stringify(storeData, null, 2));
+  fs.writeFileSync(storeFile, JSON.stringify(storeData, null, 2));
 }
 
 // Функция для генерации случайного кода
 function generateCode() {
- return Math.floor(100000 + Math.random() * 900000).toString();
+  return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
 // Функция для генерации уникального номера в формате '+777 XX XX'
 function generateNumber() {
- const digits = () => Math.floor(10 + Math.random() * 90);
- return `+777 ${digits()} ${digits()}`;
+  const digits = () => Math.floor(10 + Math.random() * 90);
+  return `+777 ${digits()} ${digits()}`;
 }
 
 // Обработка команды '/start'
 bot.onText(/\/start/, (msg) => {
- const chatId = msg.chat.id;
- const userId = msg.from.id;
+  const chatId = msg.chat.id;
+  const userId = msg.from.id;
 
- // Сохранение chat ID пользователя
- if (!userData[userId]) {
-  userData[userId] = {
-   chatId: chatId,
-   numbers: [],
-  };
-  saveUserData();
- }
+  // Сохранение chat ID пользователя
+  if (!userData[userId]) {
+    userData[userId] = {
+      chatId: chatId,
+      numbers: [],
+    };
+    saveUserData();
+  }
 
- bot.sendMessage(chatId, 'Добро пожаловать! Используйте /generate для получения номера.');
+  bot.sendMessage(chatId, 'Добро пожаловать! Используйте /generate для получения номера.');
 });
 
-// Обработка команды '/generate'
+// Обработка команды '/generate' (бесплатно)
 bot.onText(/\/generate/, (msg) => {
- const chatId = msg.chat.id;
- const userId = msg.from.id;
+  const chatId = msg.chat.id;
+  const userId = msg.from.id;
 
- // Проверка существования пользователя
- if (!userData[userId]) {
+  // Проверка, что пользователь зарегистрирован
+  if (!userData[userId]) {
     bot.sendMessage(chatId, 'Пожалуйста, используйте /start для запуска бота.');
     return;
   }
 
-  const price = 1; // Цена за генерацию номера (в минимальных единицах валюты)
+  // Генерация и отправка бесплатного номера
+  const number = generateNumber();
+  userData[userId].numbers.push(number);
+  saveUserData();
 
-  // Отправка счёта на оплату для генерации номера
-  bot.sendInvoice(
-    chatId,
-    'Покупка номера',
-    'Оплатите, чтобы получить новый номер.',
-    `generate_number_${userId}_${Date.now()}`, // payload
-    'generate_number', // start_parameter
-    'XTR', // Валюта (замените на нужную вам)
-    [
-      { label: 'Новый номер', amount: price * 1 }, // Цена в минимальных единицах валюты (например, центы)
-    ],
-    {
-      need_name: false,
-      need_phone_number: false,
-      need_email: false,
-      need_shipping_address: false,
-      is_flexible: false,
-    }
-  );
+  bot.sendMessage(chatId, `Ваш бесплатный номер: ${number}`);
 });
 
-// Обработка pre-checkout запроса
+// Обработка pre-checkout запроса (для магазина)
 bot.on('pre_checkout_query', (query) => {
   bot.answerPreCheckoutQuery(query.id, true);
 });
 
-// Обработка успешной оплаты
+// Обработка успешной оплаты (покупка из магазина)
 bot.on('successful_payment', (msg) => {
   const userId = msg.from.id;
   const payload = msg.successful_payment.invoice_payload;
 
-  if (payload.startsWith('generate_number')) {
-    // Генерация и отправка номера после оплаты
-    const number = generateNumber();
-    userData[userId].numbers.push(number);
-    saveUserData();
-
-    bot.sendMessage(msg.chat.id, `Ваш номер: ${number}`);
-  } else if (payload.startsWith('buyNumber_')) {
+  if (payload.startsWith('buyNumber_')) {
     // Обработка покупки номера из магазина
     const rawNumber = payload.split('_')[1];
     const number = `+${rawNumber.slice(0, 3)} ${rawNumber.slice(3, 5)} ${rawNumber.slice(5)}`;
@@ -186,9 +163,8 @@ bot.onText(/\/store/, (msg) => {
   bot.sendMessage(chatId, 'Доступные номера:', options);
 });
 
-// Обработка нажатий на инлайн-кнопки
+// Обработка нажатий на инлайн-кнопки (покупка)
 bot.on('callback_query', (callbackQuery) => {
-  const msg = callbackQuery.message;
   const data = callbackQuery.data;
   const userId = callbackQuery.from.id;
 
@@ -200,14 +176,14 @@ bot.on('callback_query', (callbackQuery) => {
 
     // Отправка счёта на оплату для покупки номера
     bot.sendInvoice(
-      callbackQuery.from.id,
+      userId,
       `Покупка номера ${number}`,
       `Оплатите, чтобы приобрести номер ${number}.`,
       `buyNumber_${rawNumber}`, // payload
       'buy_number', // start_parameter
-      'XTR', // Валюта (замените на нужную вам)
+      'XTR', // Валюта
       [
-        { label: `Покупка номера ${number}`, amount: price * 1 }, // Цена в минимальных единицах валюты
+        { label: `Покупка номера ${number}`, amount: price * 1 },
       ],
       {
         need_name: false,
@@ -291,4 +267,3 @@ app.post('/auth', (req, res) => {
 app.listen(port, () => {
   console.log(`Сервер запущен на порту ${port}`);
 });
-
